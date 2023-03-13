@@ -39,6 +39,7 @@ class TooltipLayout : FrameLayout {
     private var prevTextColor = 0
     private var nextTextColor = 0
     private var finishTextColor = 0
+    private var finishBackgroundColor = 0
     private var shadowColor = 0
     private var textSize = 0f
     private var textTitleSize = 0f
@@ -248,6 +249,7 @@ class TooltipLayout : FrameLayout {
             if (isLast) {
                 nextButton!!.text = finishString
                 nextButton!!.setTextColor(finishTextColor)
+                nextButton!!.setBackgroundColor(finishBackgroundColor)
             } else if (currentTutorIndex < tutorsListSize - 1) { // has next
                 nextButton!!.text = nextString
                 nextButton!!.setTextColor(nextTextColor)
@@ -419,6 +421,7 @@ class TooltipLayout : FrameLayout {
         prevTextColor = Color.WHITE
         nextTextColor = Color.WHITE
         finishTextColor = Color.WHITE
+        finishBackgroundColor = Color.WHITE
         textTitleSize = resources.getDimension(dimen.title_size)
         textSize = resources.getDimension(dimen.text_normal)
         shadowColor = ContextCompat.getColor(context, color.shadow)
@@ -501,6 +504,11 @@ class TooltipLayout : FrameLayout {
             context,
             builder.getFinishTextColorRes()
         ) else finishTextColor
+
+        finishBackgroundColor = if (builder.getFinishBackgroundColorRes() != 0) ContextCompat.getColor(
+            context,
+            builder.getFinishBackgroundColorRes()
+        ) else finishBackgroundColor
 
         textTitleSize =
             if (builder.getTitleTextSizeRes() != 0) resources.getDimension(builder.getTitleTextSizeRes()) else textTitleSize
@@ -1040,6 +1048,7 @@ class TooltipLayout : FrameLayout {
                 }
             }
             TooltipContentPosition.UNDEFINED -> moveViewToCenter()
+            else -> moveViewToCenter()
         }
     }
 

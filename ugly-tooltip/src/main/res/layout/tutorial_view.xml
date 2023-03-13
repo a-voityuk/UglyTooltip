@@ -21,14 +21,16 @@
             android:paddingHorizontal="@dimen/text_padding_12"
             android:id="@+id/text_title"
             tools:text="Title"
-            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
             tools:textSize="@dimen/title_size"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_description"
-            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="Description description description description description description"
             android:paddingTop="8dp"
@@ -49,9 +51,9 @@
             android:orientation="horizontal">
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_previous"
-                android:paddingLeft="@dimen/text_padding_12"
-                android:paddingTop="@dimen/text_padding_12"
-                android:paddingBottom="@dimen/text_padding_12"
+                android:layout_marginStart="@dimen/text_padding_12"
+                android:layout_marginBottom="@dimen/text_padding_12"
+                android:paddingVertical="@dimen/text_padding_12"
                 android:layout_width="@dimen/buttom_width_small"
                 android:layout_height="wrap_content"
                 android:background="@drawable/selector_white"
@@ -81,7 +83,8 @@
             </LinearLayout>
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_next"
-                android:paddingRight="@dimen/text_padding_12"
+                android:layout_marginEnd="@dimen/text_padding_12"
+                android:layout_marginBottom="@dimen/text_padding_12"
                 android:paddingVertical="@dimen/text_padding_12"
                 android:layout_width="@dimen/buttom_width_small"
                 android:layout_height="wrap_content"
