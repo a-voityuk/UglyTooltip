@@ -24,7 +24,9 @@ class TooltipBuilder() : Parcelable {
     private var prevTextColorRes = 0
     private var nextTextColorRes = 0
     private var finishTextColorRes = 0
+    private var finishTextSizeRes = 0
     private var finishBackgroundColorRes = 0
+    private var finishBackgroundDrawableRes = 0
     private var shadowColorRes = 0
     private var titleTextSizeRes = 0
     private var textSizeRes = 0
@@ -134,8 +136,18 @@ class TooltipBuilder() : Parcelable {
         return this
     }
 
+    fun finishTextSizeRes(@DimenRes finishTextSizeRes: Int): TooltipBuilder {
+        this.finishTextSizeRes = finishTextSizeRes
+        return this
+    }
+
     fun finishBackgroundColorRes(@ColorRes finishBackgroundColorRes: Int): TooltipBuilder {
         this.finishBackgroundColorRes = finishBackgroundColorRes
+        return this
+    }
+
+    fun finishBackgroundDrawableRes(@DrawableRes finishBackgroundDrawableRes: Int): TooltipBuilder {
+        this.finishBackgroundDrawableRes = finishBackgroundDrawableRes
         return this
     }
 
@@ -283,8 +295,16 @@ class TooltipBuilder() : Parcelable {
         return finishBackgroundColorRes
     }
 
+    fun getFinishBackgroundDrawableRes(): Int {
+        return finishBackgroundDrawableRes
+    }
+
     fun getTitleTextSizeRes(): Int {
         return titleTextSizeRes
+    }
+
+    fun getFinishTextSizeRes(): Int {
+        return finishTextSizeRes
     }
 
     fun getFinishStringRes(): Int {
@@ -420,6 +440,7 @@ class TooltipBuilder() : Parcelable {
         nextTextColorRes = `in`.readInt()
         finishTextColorRes = `in`.readInt()
         finishBackgroundColorRes = `in`.readInt()
+        finishBackgroundDrawableRes = `in`.readInt()
     }
     
     constructor(parcel: Parcel) : this() {

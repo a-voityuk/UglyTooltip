@@ -2,6 +2,7 @@ package io.akndmr.ugly_tooltip
 
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.Html
 import android.text.Spanned
@@ -38,13 +39,19 @@ class TooltipLayout : FrameLayout {
     private var titleTextColor = 0
     private var prevTextColor = 0
     private var nextTextColor = 0
+
+    private var finishTextSizeRes = 0f
     private var finishTextColor = 0
     private var finishBackgroundColor = 0
+    private var finishBackgroundDrawableRes: Drawable? = null
+
     private var shadowColor = 0
+
     private var textSize = 0f
     private var textTitleSize = 0f
     private var textTypeface: Typeface? = null
     private var textTitleTypeface: Typeface? = null
+
     private var spacing = 0
     private var arrowMargin = 0
     private var arrowWidth = 0
@@ -262,7 +269,9 @@ class TooltipLayout : FrameLayout {
             if (isLast) {
                 nextButton!!.text = finishString
                 nextButton!!.setTextColor(finishTextColor)
+                nextButton!!.setTextSize(TypedValue.COMPLEX_UNIT_PX, finishTextSizeRes)
                 nextButton!!.setBackgroundColor(finishBackgroundColor)
+                nextButton!!.background = finishBackgroundDrawableRes
             } else if (currentTutorIndex < tutorsListSize - 1) { // has next
                 nextButton!!.text = nextString
                 nextButton!!.setTextColor(nextTextColor)
@@ -449,6 +458,7 @@ class TooltipLayout : FrameLayout {
         nextTextColor = Color.WHITE
         finishTextColor = Color.WHITE
         finishBackgroundColor = Color.WHITE
+        finishTextSizeRes = resources.getDimension(dimen.text_normal)
         textTitleSize = resources.getDimension(dimen.title_size)
         textSize = resources.getDimension(dimen.text_normal)
         shadowColor = ContextCompat.getColor(context, color.shadow)
@@ -537,6 +547,14 @@ class TooltipLayout : FrameLayout {
             context,
             builder.getFinishBackgroundColorRes()
         ) else finishBackgroundColor
+
+        finishBackgroundDrawableRes = if (builder.getFinishBackgroundDrawableRes() != 0) ContextCompat.getDrawable(
+            context,
+            builder.getFinishBackgroundDrawableRes()
+        ) else finishBackgroundDrawableRes
+
+        finishTextSizeRes =
+            if (builder.getFinishTextSizeRes() != 0) resources.getDimension(builder.getFinishTextSizeRes()) else finishTextSizeRes
 
         textTitleSize =
             if (builder.getTitleTextSizeRes() != 0) resources.getDimension(builder.getTitleTextSizeRes()) else textTitleSize
