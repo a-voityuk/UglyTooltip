@@ -11,6 +11,7 @@ import android.view.ViewGroup
 
 
 class TooltipObject(
+    val id: Int,
     val view: View?,
     val title: String?,
     val text: String?,

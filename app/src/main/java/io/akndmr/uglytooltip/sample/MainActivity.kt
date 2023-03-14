@@ -58,24 +58,24 @@ class MainActivity : AppCompatActivity() {
             .showViewBitmap(false)
             .build();
 
-        tooltipDialog?.setTooltipListener(object : TooltipListener {
+        tooltipDialog?.setTooltipListener(object : TooltipDialogListener {
             override
-            fun onPrevious() {
-                if (tooltipDialog != null) {
+            fun onPrevious(tooltip: TooltipObject?) {
+                if (tooltip != null) {
 
                 }
             }
 
             override
-            fun onNext() {
-                if (tooltipDialog != null) {
+            fun onNext(tooltip: TooltipObject?) {
+                if (tooltip != null) {
 
                 }
             }
 
             override
-            fun onComplete() {
-                if (tooltipDialog != null) {
+            fun onComplete(tooltip: TooltipObject?) {
+                if (tooltip != null) {
 
                 }
             }
@@ -87,6 +87,7 @@ class MainActivity : AppCompatActivity() {
 
         tooltips.add(
             TooltipObject(
+                0,
                 findViewById<ImageView>(R.id.iv3),
                 "Довідка",
                 "Якщо у Вас виникли питання або проблеми - напишіть нам в службу підтримки"

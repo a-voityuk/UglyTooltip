@@ -43,7 +43,7 @@ class TooltipDialog : DialogFragment() {
     private var retryCounter = 0
 
     // listener
-    private var tooltipListener: TooltipListener? = null
+    private var tooltipListener: TooltipDialogListener? = null
 
     companion object {
         private val ARG_BUILDER = "BUILDER"
@@ -97,7 +97,9 @@ class TooltipDialog : DialogFragment() {
             override
             fun onPrevious() {
                 if (tooltipListener != null) {
-                    this@TooltipDialog.tooltipListener!!.onPrevious()
+                    val tooltipObject: TooltipObject = tutorsList?.get(currentTutorIndex) as TooltipObject
+
+                    this@TooltipDialog.tooltipListener!!.onPrevious(tooltipObject)
                 }
 
                 previous()
@@ -106,7 +108,9 @@ class TooltipDialog : DialogFragment() {
             override
             fun onNext() {
                 if (tooltipListener != null) {
-                    this@TooltipDialog.tooltipListener!!.onNext()
+                    val tooltipObject: TooltipObject = tutorsList?.get(currentTutorIndex) as TooltipObject
+
+                    this@TooltipDialog.tooltipListener!!.onNext(tooltipObject)
                 }
 
                 next()
@@ -115,7 +119,9 @@ class TooltipDialog : DialogFragment() {
             override
             fun onComplete() {
                 if (tooltipListener != null) {
-                    this@TooltipDialog.tooltipListener!!.onComplete()
+                    val tooltipObject: TooltipObject = tutorsList?.get(currentTutorIndex) as TooltipObject
+
+                    this@TooltipDialog.tooltipListener!!.onComplete(tooltipObject)
                 }
 
                 if (!TextUtils.isEmpty(dialogTag)) {
@@ -131,7 +137,7 @@ class TooltipDialog : DialogFragment() {
         }
     }
 
-    fun setTooltipListener(showCaseListener: TooltipListener?) {
+    fun setTooltipListener(showCaseListener: TooltipDialogListener?) {
         this.tooltipListener = showCaseListener
     }
 
