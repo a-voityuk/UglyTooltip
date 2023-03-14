@@ -43,6 +43,8 @@ class TooltipLayout : FrameLayout {
     private var shadowColor = 0
     private var textSize = 0f
     private var textTitleSize = 0f
+    private var textTypeface: Typeface? = null
+    private var textTitleTypeface: Typeface? = null
     private var spacing = 0
     private var arrowMargin = 0
     private var arrowWidth = 0
@@ -68,6 +70,7 @@ class TooltipLayout : FrameLayout {
 
     private var tooltipRadius: Int = 0
     private var showSpotlight: Boolean = true
+    private var showViewBitmap: Boolean = true
 
     // View
     private var viewGroup: ViewGroup? = null
@@ -135,12 +138,13 @@ class TooltipLayout : FrameLayout {
         init(context, null)
     }
 
-
     private fun init(context: Context, @Nullable builder: TooltipBuilder?) {
         visibility = View.GONE
+
         if (isInEditMode) {
             return
         }
+
         applyAttrs(context, builder)
 
         //setBackground, color
@@ -148,8 +152,10 @@ class TooltipLayout : FrameLayout {
 
         // setContentView
         initContent(context, builder)
+
         isClickable = isCancelable
         isFocusable = isCancelable
+
         if (isCancelable) {
             setOnClickListener { onNextClicked() }
         }
@@ -167,7 +173,9 @@ class TooltipLayout : FrameLayout {
 
     private fun initFrame() {
         setWillNotDraw(false)
+
         viewPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+
         if (showSpotlight) {
             viewPaint!!.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
         }
@@ -179,6 +187,7 @@ class TooltipLayout : FrameLayout {
         arrowPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         arrowPaint!!.color = backgroundContentColor
         arrowPaint!!.style = Paint.Style.FILL
+
         setBackgroundColor(shadowColor)
     }
 
@@ -200,16 +209,20 @@ class TooltipLayout : FrameLayout {
     ) {
         isStart = currentTutorIndex == 0
         isLast = currentTutorIndex == tutorsListSize - 1
+
         this.tooltipContentPosition = tooltipContentPosition
+
         if (bitmap != null) {
             bitmap!!.recycle()
         }
+
         if (TextUtils.isEmpty(title)) {
             textViewTitle!!.visibility = View.GONE
         } else {
             textViewTitle!!.text = fromHtml(title)
             textViewTitle!!.visibility = View.VISIBLE
         }
+
         textViewDesc!!.text = fromHtml(text)
 
         if (prevButton != null) {
@@ -270,11 +283,13 @@ class TooltipLayout : FrameLayout {
         }
 
         makeCircleIndicator(!isStart || !isLast, currentTutorIndex, tutorsListSize)
+
         if (view == null) {
             lastTutorialView = null
             bitmap = null
             highlightLocX = 0f
             highlightLocY = 0f
+
             moveViewToCenter()
         } else {
             lastTutorialView = view
@@ -287,6 +302,7 @@ class TooltipLayout : FrameLayout {
                     view.measuredWidth,
                     view.measuredHeight, Bitmap.Config.ARGB_8888
                 )
+
                 val bigCanvas = Canvas(bigBitmap)
                 bigCanvas.drawColor(tintBackgroundColor)
                 val paint = Paint()
@@ -294,6 +310,7 @@ class TooltipLayout : FrameLayout {
                 if (bitmapTemp != null) {
                     bigCanvas.drawBitmap(bitmapTemp, 0f, 0f, paint)
                 }
+
                 bitmap = bigBitmap
             }
 
@@ -314,10 +331,12 @@ class TooltipLayout : FrameLayout {
             } else { // use view location as target
                 val location = IntArray(2)
                 view.getLocationInWindow(location)
+
                 highlightLocX = location[0].toFloat()
                 highlightLocY =
                     location[1] - TooltipViewHelper.getStatusBarHeight(context).toFloat()
             }
+
             this.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     if (this@TooltipLayout.bitmap != null) {
@@ -327,6 +346,7 @@ class TooltipLayout : FrameLayout {
                             this@TooltipLayout.highlightLocX + this@TooltipLayout.bitmap!!.width,
                             this@TooltipLayout.highlightLocY + this@TooltipLayout.bitmap!!.height
                         )
+
                         this@TooltipLayout.viewTreeObserver
                             .removeOnGlobalLayoutListener(this)
                         invalidate()
@@ -334,6 +354,7 @@ class TooltipLayout : FrameLayout {
                 }
             })
         }
+
         this.visibility = View.VISIBLE
     }
 
@@ -386,10 +407,12 @@ class TooltipLayout : FrameLayout {
 
     fun closeTutorial() {
         visibility = View.GONE
+
         if (bitmap != null) {
             bitmap!!.recycle()
             bitmap = null
         }
+
         if (lastTutorialView != null) {
             lastTutorialView = null
         }
@@ -404,8 +427,12 @@ class TooltipLayout : FrameLayout {
         if (bitmap == null || bitmap!!.isRecycled) {
             return
         }
+
         super.onDraw(canvas)
-        canvas.drawBitmap(bitmap!!, highlightLocX, highlightLocY, viewPaint)
+
+        if (showViewBitmap || showSpotlight) {
+            canvas.drawBitmap(bitmap!!, highlightLocX, highlightLocY, viewPaint)
+        }
 
         // drawArrow
         if (path != null && arrowPaint != null && viewGroup!!.visibility == View.VISIBLE) {
@@ -445,6 +472,7 @@ class TooltipLayout : FrameLayout {
         }
 
         showSpotlight = builder.shouldShowSpotlight()
+        showViewBitmap = builder.shouldShowViewBitmap()
 
         layoutRes = if (builder.getLayoutRes() != 0) builder.getLayoutRes() else layoutRes
 
@@ -515,6 +543,10 @@ class TooltipLayout : FrameLayout {
 
         textSize =
             if (builder.getTextSizeRes() != 0) resources.getDimension(builder.getTextSizeRes()) else textSize
+
+        textTypeface = builder.getTextTypeface()
+
+        textTitleTypeface = builder.getTextTitleTypeface()
 
         backgroundContentColor =
             if (builder.getBackgroundContentColorRes() != 0) ContextCompat.getColor(
@@ -637,17 +669,22 @@ class TooltipLayout : FrameLayout {
             viewGroupTutorContent.setCardBackgroundColor(backgroundContentColor)
             viewGroupTutorContent.radius = tooltipRadius.toFloat()
             //TooltipViewHelper.setBackgroundColor(viewGroupTutorContent, backgroundContentColor)
-            textViewTitle = viewGroupTutorContent.findViewById(text_title)
+
             textViewTitle = viewGroupTutorContent.findViewById(text_title)
             textViewTitle!!.setTextColor(titleTextColor)
             textViewTitle!!.setTextSize(TypedValue.COMPLEX_UNIT_PX, textTitleSize)
+            textViewTitle!!.setTypeface(textTitleTypeface)
+
             textViewDesc = viewGroupTutorContent.findViewById(text_description)
             textViewDesc!!.setTextColor(textColor)
             textViewDesc!!.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize)
+            if (textTypeface != null) textViewDesc!!.setTypeface(textTypeface)
+
             prevButton = viewGroupTutorContent.findViewById(text_previous)
             nextButton = viewGroupTutorContent.findViewById(text_next)
             prevImageView = viewGroupTutorContent.findViewById(ic_previous)
             nextImageView = viewGroupTutorContent.findViewById(ic_next)
+
             lineView = viewGroupTutorContent.findViewById(view_line)
             bottomContainer = viewGroupTutorContent.findViewById(bottom_container)
 
@@ -726,6 +763,7 @@ class TooltipLayout : FrameLayout {
             bottomContainer?.let {
                 it.visibility = View.GONE
             }
+
             lineView?.let {
                 it.visibility = View.GONE
             }

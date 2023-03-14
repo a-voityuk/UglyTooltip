@@ -1,5 +1,6 @@
 package io.akndmr.ugly_tooltip
 
+import android.graphics.Typeface
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.ColorRes
@@ -27,6 +28,8 @@ class TooltipBuilder() : Parcelable {
     private var shadowColorRes = 0
     private var titleTextSizeRes = 0
     private var textSizeRes = 0
+    private var textTypeface: Typeface? = null
+    private var textTitleTypeface: Typeface? = null
     private var spacingRes = 0
     private var backgroundContentColorRes = 0
     private var circleIndicatorBackgroundDrawableRes = 0
@@ -49,6 +52,7 @@ class TooltipBuilder() : Parcelable {
     private var packageName: String? = null
     private var tooltipRadius: Int = 0
     private var showSpotlight: Boolean = true
+    private var showViewBitmap: Boolean = true
     private var showBottomContainer: Boolean = true
 
     private var skipStringRes = 0
@@ -80,6 +84,11 @@ class TooltipBuilder() : Parcelable {
         return this
     }
 
+    fun showViewBitmap(showViewBitmap: Boolean): TooltipBuilder {
+        this.showViewBitmap = showViewBitmap
+        return this
+    }
+
     fun setFragmentManager(fm: FragmentManager): TooltipBuilder {
         this.childFragmentManager = fm
         return this
@@ -97,6 +106,16 @@ class TooltipBuilder() : Parcelable {
 
     fun titleTextColorRes(@ColorRes titleTextColorRes: Int): TooltipBuilder {
         this.titleTextColorRes = titleTextColorRes
+        return this
+    }
+
+    fun setTextTypeface(textTypeface: Typeface?): TooltipBuilder {
+        this.textTypeface = textTypeface
+        return this
+    }
+
+    fun setTextTitleTypeface(textTitleTypeface: Typeface?): TooltipBuilder {
+        this.textTitleTypeface = textTitleTypeface
         return this
     }
 
@@ -228,6 +247,10 @@ class TooltipBuilder() : Parcelable {
         return showSpotlight
     }
 
+    fun shouldShowViewBitmap(): Boolean {
+        return showViewBitmap
+    }
+
     fun getTooltipRadius(): Int {
         return tooltipRadius
     }
@@ -326,6 +349,14 @@ class TooltipBuilder() : Parcelable {
 
     fun getTextSizeRes(): Int {
         return textSizeRes
+    }
+
+    fun getTextTypeface(): Typeface? {
+        return textTypeface
+    }
+
+    fun getTextTitleTypeface(): Typeface? {
+        return textTitleTypeface
     }
 
     fun getBackgroundContentColorRes(): Int {

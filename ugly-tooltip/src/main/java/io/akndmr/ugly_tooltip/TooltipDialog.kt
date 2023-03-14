@@ -42,6 +42,9 @@ class TooltipDialog : DialogFragment() {
 
     private var retryCounter = 0
 
+    // listener
+    private var tooltipListener: TooltipListener? = null
+
     companion object {
         private val ARG_BUILDER = "BUILDER"
 
@@ -93,25 +96,43 @@ class TooltipDialog : DialogFragment() {
         view.setTooltipListener(object : TooltipListener {
             override
             fun onPrevious() {
+                if (tooltipListener != null) {
+                    this@TooltipDialog.tooltipListener!!.onPrevious()
+                }
+
                 previous()
             }
 
             override
             fun onNext() {
+                if (tooltipListener != null) {
+                    this@TooltipDialog.tooltipListener!!.onNext()
+                }
+
                 next()
             }
 
             override
             fun onComplete() {
+                if (tooltipListener != null) {
+                    this@TooltipDialog.tooltipListener!!.onComplete()
+                }
+
                 if (!TextUtils.isEmpty(dialogTag)) {
                     TooltipPreference.setShown(requireContext(), dialogTag, true)
                 }
+
                 this@TooltipDialog.close()
             }
         })
+
         if (builder != null) {
             isCancelable = builder!!.isClickable()
         }
+    }
+
+    fun setTooltipListener(showCaseListener: TooltipListener?) {
+        this.tooltipListener = showCaseListener
     }
 
     operator fun next() {
@@ -162,7 +183,6 @@ class TooltipDialog : DialogFragment() {
     fun hasShown(activity: Activity, tag: String): Boolean {
         return TooltipPreference.hasShown(requireActivity(), tag)
     }
-
 
     fun show(
         activity: Activity?,
@@ -217,7 +237,6 @@ class TooltipDialog : DialogFragment() {
                 hasViewGroupHandled = true
             }
 
-
             // has been handled by listener
             if (hasViewGroupHandled) {
                 return
@@ -225,10 +244,13 @@ class TooltipDialog : DialogFragment() {
 
             val tooltipObject: TooltipObject = tutorList[currentTutorIndex]
             val viewGroup: ViewGroup? = tooltipObject.scrollView
+
             if (viewGroup != null) {
                 val viewToFocus: View? = tooltipObject.view
+
                 hasViewGroupHandled = if (viewToFocus != null) {
                     hideLayout()
+
                     viewGroup.post {
                         if (viewGroup is ScrollView) {
                             val scrollView = viewGroup
@@ -267,6 +289,7 @@ class TooltipDialog : DialogFragment() {
                     false
                 }
             }
+
             if (!hasViewGroupHandled) {
                 showLayout(activity, fm, tutorsList!![currentTutorIndex])
             }
@@ -274,6 +297,7 @@ class TooltipDialog : DialogFragment() {
             // to Handle the unknown exception.
             // Since this only for first guide, if any error appears, just don't show the guide
             Log.e(LOG_TAG, e.stackTraceToString())
+
             try {
                 this@TooltipDialog.dismiss()
             } catch (e2: Exception) {
@@ -305,6 +329,7 @@ class TooltipDialog : DialogFragment() {
                 return
             }
         }
+
         val view: View? = tooltipObject.view
         val title: String? = tooltipObject.title
         val text: String? = tooltipObject.text
@@ -313,6 +338,7 @@ class TooltipDialog : DialogFragment() {
         val tintBackgroundColor: Int = tooltipObject.tintBackgroundColor
         val location: IntArray? = tooltipObject.getLocation()
         val radius: Int = tooltipObject.getRadius()
+
         if (view == null) {
             layoutShowTutorial(
                 null, title, text, tooltipContentPosition,
@@ -344,11 +370,13 @@ class TooltipDialog : DialogFragment() {
     ) {
         try {
             val layout: TooltipLayout? = this@TooltipDialog.view as TooltipLayout
+
             if (layout == null) {
                 if (retryCounter >= MAX_RETRY_LAYOUT) {
                     retryCounter = 0
                     return
                 }
+
                 // wait until the layout is ready, and call itself
                 Handler(Looper.getMainLooper()).postDelayed(Runnable {
                     retryCounter++
@@ -359,7 +387,9 @@ class TooltipDialog : DialogFragment() {
                 }, 1000)
                 return
             }
+
             retryCounter = 0
+
             layout.showTutorial(
                 view, title, text, currentTutorIndex, tutorsList!!.size,
                 showCaseContentPosition, tintBackgroundColor, customTarget, radius
@@ -372,11 +402,11 @@ class TooltipDialog : DialogFragment() {
     fun close() {
         try {
             dismiss()
+
             val layout: TooltipLayout = this@TooltipDialog.view as TooltipLayout ?: return
             layout.closeTutorial()
         } catch (e: Exception) {
             Log.e(LOG_TAG, e.stackTraceToString())
         }
     }
-
 }

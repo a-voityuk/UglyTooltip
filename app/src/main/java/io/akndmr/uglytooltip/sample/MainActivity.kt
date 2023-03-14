@@ -1,15 +1,13 @@
 package io.akndmr.uglytooltip.sample
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import io.akndmr.ugly_tooltip.*
 import io.akndmr.ugly_tooltip.R.*
-import io.akndmr.ugly_tooltip.TooltipBuilder
-import io.akndmr.ugly_tooltip.TooltipContentPosition
-import io.akndmr.ugly_tooltip.TooltipDialog
-import io.akndmr.ugly_tooltip.TooltipObject
 import io.akndmr.uglytooltip.R
 
 class MainActivity : AppCompatActivity() {
@@ -55,7 +53,31 @@ class MainActivity : AppCompatActivity() {
             .shouldShowIcons(false)
             .setTooltipRadius(dimen.tooltip_radius)
             .showSpotlight(false)
-            .build()
+            .showViewBitmap(false)
+            .build();
+
+        tooltipDialog?.setTooltipListener(object : TooltipListener {
+            override
+            fun onPrevious() {
+                if (tooltipDialog != null) {
+
+                }
+            }
+
+            override
+            fun onNext() {
+                if (tooltipDialog != null) {
+
+                }
+            }
+
+            override
+            fun onComplete() {
+                if (tooltipDialog != null) {
+
+                }
+            }
+        })
     }
 
     fun startUglyTooltips() {
@@ -131,7 +153,12 @@ class MainActivity : AppCompatActivity() {
 //            )
 //        )
 
-        tooltipDialog?.show(this, supportFragmentManager, "SHOWCASE_TAG", tooltips)
+//        tooltipDialog?.show(this, supportFragmentManager, "SHOWCASE_TAG", tooltips)
+        tooltipDialog?.showWithCallback(this, supportFragmentManager, "", tooltips, onStep = {
+            if (it == 0) {
+
+            }
+        })
 
     }
 
