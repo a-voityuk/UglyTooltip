@@ -1129,7 +1129,6 @@ class TooltipLayout : FrameLayout {
 
     private fun setLayoutViewGroup(params: LayoutParams) {
         viewGroup!!.visibility = View.INVISIBLE
-        viewGroup!!.setBackgroundColor(ContextCompat.getColor(context, color.green))
         viewGroup!!.addOnLayoutChangeListener(object : OnLayoutChangeListener {
             override fun onLayoutChange(
                 v: View?,
