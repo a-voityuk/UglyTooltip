@@ -344,17 +344,19 @@ class TooltipDialog : DialogFragment() {
         val tintBackgroundColor: Int = tooltipObject.tintBackgroundColor
         val location: IntArray? = tooltipObject.getLocation()
         val radius: Int = tooltipObject.getRadius()
+        val viewWidth: Int = tooltipObject.getViewWidth()
+        val viewHeight: Int = tooltipObject.getViewHeight()
 
         if (view == null) {
             layoutShowTutorial(
                 null, title, text, tooltipContentPosition,
-                tintBackgroundColor, location, radius
+                tintBackgroundColor, location, radius, viewWidth, viewHeight
             )
         } else {
             view.post(Runnable {
                 layoutShowTutorial(
                     view, title, text, tooltipContentPosition,
-                    tintBackgroundColor, location, radius
+                    tintBackgroundColor, location, radius, viewWidth, viewHeight
                 )
             })
         }
@@ -372,10 +374,16 @@ class TooltipDialog : DialogFragment() {
         showCaseContentPosition: TooltipContentPosition,
         tintBackgroundColor: Int,
         customTarget: IntArray?,
-        radius: Int
+        radius: Int,
+        viewWidth: Int,
+        viewHeight: Int
     ) {
         try {
-            val layout: TooltipLayout? = this@TooltipDialog.view as TooltipLayout
+            var layout: TooltipLayout? = null//this@TooltipDialog.view as TooltipLayout
+
+            if (this@TooltipDialog.view != null) {
+                layout = this@TooltipDialog.view as TooltipLayout
+            }
 
             if (layout == null) {
                 if (retryCounter >= MAX_RETRY_LAYOUT) {
@@ -386,9 +394,10 @@ class TooltipDialog : DialogFragment() {
                 // wait until the layout is ready, and call itself
                 Handler(Looper.getMainLooper()).postDelayed(Runnable {
                     retryCounter++
+
                     layoutShowTutorial(
                         view, title, text,
-                        showCaseContentPosition, tintBackgroundColor, customTarget, radius
+                        showCaseContentPosition, tintBackgroundColor, customTarget, radius, viewWidth, viewHeight
                     )
                 }, 1000)
                 return
@@ -398,7 +407,7 @@ class TooltipDialog : DialogFragment() {
 
             layout.showTutorial(
                 view, title, text, currentTutorIndex, tutorsList!!.size,
-                showCaseContentPosition, tintBackgroundColor, customTarget, radius
+                showCaseContentPosition, tintBackgroundColor, customTarget, radius, viewWidth, viewHeight
             )
         } catch (t: Throwable) {
             // do nothing

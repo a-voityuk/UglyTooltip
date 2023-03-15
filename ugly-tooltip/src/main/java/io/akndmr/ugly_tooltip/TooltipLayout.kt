@@ -212,7 +212,9 @@ class TooltipLayout : FrameLayout {
         tooltipContentPosition: TooltipContentPosition?,
         tintBackgroundColor: Int,
         customTarget: IntArray?,
-        radius: Int
+        radius: Int,
+        viewWidth: Int,
+        viewHeight: Int
     ) {
         isStart = currentTutorIndex == 0
         isLast = currentTutorIndex == tutorsListSize - 1
@@ -299,7 +301,27 @@ class TooltipLayout : FrameLayout {
             highlightLocX = 0f
             highlightLocY = 0f
 
-            moveViewToCenter()
+            if (customTarget != null && customTarget.isNotEmpty()) {
+                highlightLocX = customTarget[0].toFloat()
+                highlightLocY = customTarget[1].toFloat() - TooltipViewHelper.getStatusBarHeight(context).toFloat()
+
+                this.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        moveViewBasedHighlight(
+                            highlightLocX,
+                            highlightLocY,
+                            highlightLocX + viewWidth,
+                            highlightLocY + viewHeight
+                        )
+
+                        this@TooltipLayout.viewTreeObserver
+                            .removeOnGlobalLayoutListener(this)
+                        invalidate()
+                    }
+                })
+            } else {
+                moveViewToCenter()
+            }
         } else {
             lastTutorialView = view
 
@@ -342,8 +364,7 @@ class TooltipLayout : FrameLayout {
                 view.getLocationInWindow(location)
 
                 highlightLocX = location[0].toFloat()
-                highlightLocY =
-                    location[1] - TooltipViewHelper.getStatusBarHeight(context).toFloat()
+                highlightLocY = location[1] - TooltipViewHelper.getStatusBarHeight(context).toFloat()
             }
 
             this.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
@@ -433,13 +454,9 @@ class TooltipLayout : FrameLayout {
     }
 
     override fun onDraw(canvas: Canvas) {
-        if (bitmap == null || bitmap!!.isRecycled) {
-            return
-        }
-
         super.onDraw(canvas)
 
-        if (showViewBitmap || showSpotlight) {
+        if ((showViewBitmap || showSpotlight) && !(bitmap == null || bitmap!!.isRecycled)) {
             canvas.drawBitmap(bitmap!!, highlightLocX, highlightLocY, viewPaint)
         }
 
@@ -952,6 +969,7 @@ class TooltipLayout : FrameLayout {
                 layoutParams.rightMargin = spacing
                 layoutParams.bottomMargin = 0
                 setLayoutViewGroup(layoutParams)
+
                 if (arrowWidth == 0) {
                     path = null
                 } else {
@@ -1033,6 +1051,7 @@ class TooltipLayout : FrameLayout {
                 layoutParams.leftMargin = spacing
                 layoutParams.rightMargin = spacing
                 setLayoutViewGroup(layoutParams)
+
                 if (arrowWidth == 0) {
                     path = null
                 } else {
@@ -1110,6 +1129,7 @@ class TooltipLayout : FrameLayout {
 
     private fun setLayoutViewGroup(params: LayoutParams) {
         viewGroup!!.visibility = View.INVISIBLE
+        viewGroup!!.setBackgroundColor(ContextCompat.getColor(context, color.green))
         viewGroup!!.addOnLayoutChangeListener(object : OnLayoutChangeListener {
             override fun onLayoutChange(
                 v: View?,

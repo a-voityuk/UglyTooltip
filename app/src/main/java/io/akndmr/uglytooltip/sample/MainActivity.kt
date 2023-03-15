@@ -2,6 +2,7 @@ package io.akndmr.uglytooltip.sample
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -85,76 +86,24 @@ class MainActivity : AppCompatActivity() {
     fun startUglyTooltips() {
         val tooltips: ArrayList<TooltipObject> = ArrayList()
 
+        var view : ImageView = findViewById<ImageView>(R.id.iv3);
+        val location = IntArray(2)
+        view.getLocationInWindow(location)
+
+        val height : Int = view.height
+        val width : Int = view.width
+
         tooltips.add(
             TooltipObject(
                 0,
-                findViewById<ImageView>(R.id.iv3),
+                null,
                 "Довідка",
-                "Якщо у Вас виникли питання або проблеми - напишіть нам в службу підтримки"
-            )
+                "Якщо у Вас виникли питання або проблеми - напишіть нам в службу підтримки",
+                TooltipContentPosition.BOTTOM,
+                0,
+                null
+            ).withCustomTarget(location, width, height, 0)
         )
-
-//        tooltips.add(
-//            TooltipObject(
-//                findViewById<TextView>(R.id.tvTest2),
-//                null,
-//                "No title, just description, simple text.",
-//                tooltipContentPosition = TooltipContentPosition.RIGHT
-//            )
-//        )
-//
-//        tooltips.add(
-//            TooltipObject(
-//                findViewById<TextView>(R.id.tvTest3),
-//                "<font color=\"#FFC300\"> an ImageView </font>",
-//                "This HTML description point to <font color=\"#FFC300\"> an ImageView </font> as you can see.<br/><br/> Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-//                tooltipContentPosition = TooltipContentPosition.LEFT
-//            )
-//        )
-//
-//        tooltips.add(
-//            TooltipObject(
-//                findViewById<ImageView>(R.id.iv4),
-//                "This is a title",
-//                "This is a description, but a little longer than number 3 but shorter than number 5 that you will see soon."
-//            )
-//        )
-//
-//        tooltips.add(
-//            TooltipObject(
-//                findViewById<TextView>(R.id.tvTest),
-//                "This is a title",
-//                "This is a description, but a little longer than number 3 but shorter than number 5 that you will see soon."
-//            )
-//        )
-//
-//        tooltips.add(
-//            TooltipObject(
-//                findViewById<ImageView>(R.id.iv5),
-//                "This is another title",
-//                "This HTML description point to <font color=\"#FFC300\"> an ImageView </font> as you can see.<br/><br/> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suo enim quisque studio maxime ducitur. Scio enim esse quosdam, qui quavis lingua philosophari possint; Animum autem reliquis rebus ita perfecit, ut corpus; Quo modo autem optimum, si bonum praeterea nullum est?"
-//            )
-//        )
-//
-//        tooltips.add(
-//            TooltipObject(
-//                findViewById<ImageView>(R.id.iv6),
-//                "This is another one",
-//                "This description point to number 6. <font color=\"#FFC300\"> This is yellow text </font> and this is white.",
-//                tooltipContentPosition = TooltipContentPosition.UNDEFINED,
-//                tintBackgroundColor = ResourcesCompat.getColor(resources, R.color.blue, null),
-//                null
-//            )
-//        )
-//
-//        tooltips.add(
-//            TooltipObject(
-//                findViewById<TextView>(R.id.tvTest4),
-//                "<font color=\"#FFC300\"> an ImageView </font>",
-//                "This HTML description point to <font color=\"#FFC300\"> an ImageView </font> as you can see.<br/><br/> Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-//                tooltipContentPosition = TooltipContentPosition.LEFT
-//            )
-//        )
 
 //        tooltipDialog?.show(this, supportFragmentManager, "SHOWCASE_TAG", tooltips)
         tooltipDialog?.showWithCallback(this, supportFragmentManager, "", tooltips, onStep = {
