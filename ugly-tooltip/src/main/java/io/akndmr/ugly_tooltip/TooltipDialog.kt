@@ -363,7 +363,14 @@ class TooltipDialog : DialogFragment() {
     }
 
     fun hideLayout() {
-        val layout: TooltipLayout = this@TooltipDialog.view as TooltipLayout ?: return
+        var layout: TooltipLayout? = null//this@TooltipDialog.view as TooltipLayout
+
+        if (this@TooltipDialog.view != null) {
+            layout = this@TooltipDialog.view as TooltipLayout
+        } else {
+            return;
+        }
+
         layout.hideTutorial()
     }
 
@@ -418,7 +425,14 @@ class TooltipDialog : DialogFragment() {
         try {
             dismiss()
 
-            val layout: TooltipLayout = this@TooltipDialog.view as TooltipLayout ?: return
+            var layout: TooltipLayout? = null//this@TooltipDialog.view as TooltipLayout
+
+            if (this@TooltipDialog.view != null) {
+                layout = this@TooltipDialog.view as TooltipLayout
+            } else {
+                return;
+            }
+
             layout.closeTutorial()
         } catch (e: Exception) {
             Log.e(LOG_TAG, e.stackTraceToString())
